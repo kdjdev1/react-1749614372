@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive React Tutorial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: "Cool Gray" with "Sky Blue" accent. This combination is modern, clean, and easy on the eyes for a learning environment. The neutral gray provides a calm background, while the blue accent guides attention to interactive elements and active states without being distracting. -->
+    <!-- Application Structure Plan: The SPA is now a single, scrollable page without a fixed sidebar. This structure was chosen to facilitate easy "print to PDF" functionality and a linear reading experience, as requested. All content, including interactive demos and quizzes, is presented sequentially. The previous navigation system has been removed to simplify the page flow. -->
+    <!-- Visualization & Content Choices: 
+    - Report Section: All conceptual text -> Presentation: Styled text blocks -> Interaction: Reading -> Justification: Foundational knowledge needs to be presented clearly. Tailwind's typography classes ensure readability.
+    - Report Section: State (Counter) -> Presentation: Live Counter Demo -> Interaction: User clicks buttons to increment/decrement a number displayed on screen -> Justification: Transforms an abstract concept (`useState`) into a tangible, hands-on experience, demonstrating state changes in real-time.
+    - Report Section: Conditional Rendering (Login) -> Presentation: Live Toggle Button/Message -> Interaction: User clicks a "Login" button, which changes to "Logout" and updates a welcome message -> Justification: Visually proves how the UI can render different elements based on a state variable.
+    - Report Section: Forms -> Presentation: Interactive Feedback Form -> Interaction: User can type in fields, and on submission, the data is displayed back to them -> Justification: Clearly demonstrates the "controlled components" pattern by linking form inputs directly to a visible state representation.
+    - Report Section: Context API -> Presentation: Theme Switcher Demo -> Interaction: A toggle button changes the color scheme of its container -> Justification: Shows how a "global" state can affect nested components without passing props, a core benefit of Context.
+    - Report Section: useEffect variations & useRef -> Presentation: Expanded Live Demos with detailed explanations -> Interaction: Users observe data fetching behavior, timer updates, and input focusing -> Justification: Provides deeper insight into Hook behaviors.
+    - Report Section: Quizzes -> Presentation: Interactive Radio Buttons -> Interaction: User selects an answer and gets immediate visual feedback (green for correct, red for incorrect) -> Justification: Turns passive review questions into an active learning check, reinforcing concepts effectively.
+    - Library/Method: All interactions are powered by vanilla JavaScript to keep the application lightweight and focused on core web technologies, mirroring the tutorial's fundamental approach. All code examples are now encased in dedicated styled boxes for better readability and distinction from explanatory text. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-box {
+            background-color: #f8fafc; /* Tailwind gray-50 */
+            border: 1px solid #e2e8f0; /* Tailwind gray-200 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            overflow-x: auto; /* For horizontal scrolling if code is too wide */
+        }
+        .code-box pre {
+            margin: 0;
+            padding: 0;
+        }
+        .code-box code {
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace; /* Modern monospace font */
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #334155; /* Tailwind slate-700 */
+        }
+        .quiz-option.correct {
+            background-color: #C6F6D5;
+            border-color: #38A169;
+        }
+        .quiz-option.incorrect {
+            background-color: #FED7D7;
+            border-color: #C53030;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center text-gray-900 mb-8">React Tutorial: Basic to Intermediate</h1>
+
+        <!-- Intro Section -->
+        <div id="intro" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+            <h2 class="text-3xl font-bold mb-4">Introduction to React (React හැඳින්වීම)</h2>
+            <p class="text-lg leading-relaxed mb-4">This section introduces the fundamental concepts of React, its core principles, and how to set up a basic React project. Understanding these basics is crucial for building any React application.</p>
+            <div class="space-y-4 text-lg leading-relaxed">
+                <h3 class="text-2xl font-semibold mt-6">What is React? (React යනු කුමක්ද?)</h3>
+                <p>React is a free and open-source front-end JavaScript library for building user interfaces based on UI components. It is maintained by Meta and a community of individual developers and companies.</p>
+                <p class="pl-4 border-l-4 border-blue-300">React යනු UI components මත පදනම්ව user interfaces නිර්මාණය කිරීම සඳහා භාවිතා කරන, Meta සහ තනි developers සහ සමාගම් වලින් සමන්විත ප්‍රජාවක් විසින් පවත්වාගෙන යනු ලබන, නොමිලේ සහ open-source front-end JavaScript library එකකි.</p>
+                <ul class="list-disc list-inside space-y-3 mt-4">
+                    <li><strong>Component-Based Architecture (Component-පාදක ගෘහ නිර්මාණ ශිල්පය):</strong> React applications are built using reusable, isolated pieces of code called components. Each component manages its own state and can be combined to form complex UIs.
+                        <p class="text-sm pl-4 text-gray-600">React application components ලෙස හඳුන්වන නැවත භාවිතා කළ හැකි, හුදකලා කේත කොටස් භාවිතයෙන් ගොඩනගා ඇත. සෑම component එකක්ම තමන්ගේම state එකක් කළමනාකරණය කරන අතර සංකීර්ණ UIs සෑදීමට ඒකාබද්ධ කළ හැකිය.</p>
+                    </li>
+                    <li><strong>Declarative (ප්‍රකාශනමය):</strong> React makes it easier to create interactive UIs. You describe how your UI should look for a given state, and React efficiently updates and renders the right components when your data changes.
+                        <p class="text-sm pl-4 text-gray-600">React අන්තර්ක්‍රියාකාරී UIs සෑදීම පහසු කරයි. ලබා දී ඇති state එකක් සඳහා ඔබේ UI පෙනෙන්නේ කෙසේදැයි ඔබ විස්තර කරන අතර, ඔබේ දත්ත වෙනස් වන විට React නිවැරදි components කාර්යක්ෂමව යාවත්කාලීන කර render කරයි.</p>
+                    </li>
+                    <li><strong>Learn Once, Write Anywhere (එක් වරක් ඉගෙන ගන්න, ඕනෑම තැනක ලියන්න):</strong> You can develop new features in React without rewriting existing code. React can also render on the server using Node and power mobile apps using React Native.
+                        <p class="text-sm pl-4 text-gray-600">පවතින කේතය නැවත ලිවීමකින් තොරව React හි නව විශේෂාංග සංවර්ධනය කළ හැක. React Node භාවිතයෙන් server මත render කළ හැකි අතර React Native භාවිතයෙන් mobile apps බලගැන්විය හැක.</p>
+                    </li>
+                </ul>
+
+                <h3 class="text-2xl font-semibold mt-6">Setting up a React Project (React Project එකක් සකස් කර ගැනීම)</h3>
+                <p>We will use Vite to quickly set up a React project. Vite is a build tool that aims to provide a faster and leaner development experience for modern web projects.</p>
+                <p class="pl-4 border-l-4 border-blue-300">React project එකක් ඉක්මනින් සකස් කර ගැනීමට අපි Vite භාවිතා කරන්නෙමු. Vite යනු නවීන web projects සඳහා වේගවත් සහ සරල සංවර්ධන අත්දැකීමක් ලබා දීම අරමුණු කරගත් build tool එකකි.</p>
+                <ol class="list-decimal list-inside space-y-3 mt-4">
+                    <li><strong>Install Node.js:</strong> Make sure you have Node.js (which includes npm) installed. You can download it from <a href="https://nodejs.org/" target="_blank" class="text-blue-600 hover:underline">nodejs.org</a>.</li>
+                    <li><strong>Create a new Vite project:</strong> Open your terminal or command prompt and run the following command:
+                        <div class="code-box"><pre><code>npm create vite@latest my-react-app -- --template react</code></pre></div>
+                        <p class="text-sm pl-4 text-gray-600">Replace <code>my-react-app</code> with your desired project name.</p>
+                    </li>
+                    <li><strong>Navigate to the project directory:</strong>
+                        <div class="code-box"><pre><code>cd my-react-app</code></pre></div>
+                    </li>
+                    <li><strong>Install dependencies:</strong>
+                        <div class="code-box"><pre><code>npm install</code></pre></div>
+                    </li>
+                    <li><strong>Start the development server:</strong>
+                        <div class="code-box"><pre><code>npm run dev</code></pre></div>
+                        <p class="text-sm pl-4 text-gray-600">This will typically start the app at <code>http://localhost:5173</code>.</p>
+                    </li>
+                </ol>
+
+                <h3 class="text-2xl font-semibold mt-6">Quiz 1: Introduction (ප්‍රශ්නාවලිය 1: හැඳින්වීම)</h3>
+                <div id="quiz1" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 space-y-4">
+                    <div>
+                        <p class="font-medium mb-2">1. React යනු කුමක්ද? (What is React?)</p>
+                        <div class="flex flex-col space-y-2">
+                            <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q1" value="a" class="mr-2"> a) A backend framework (Backend framework එකක්)</label>
+                            <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q1" value="b" class="mr-2"> b) A database management system (දත්ත සමුදා කළමනාකරණ පද්ධතියක්)</label>
+                            <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q1" value="c" class="mr-2"> c) A JavaScript library for building UIs (UIs තැනීම සඳහා JavaScript library එකක්)</label>
+                            <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q1" value="d" class="mr-2"> d) A server-side language (Server-side භාෂාවක්)</label>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="font-medium mb-2">2. What tool is recommended for quickly setting up a React project? (React project එකක් ඉක්මනින් සකස් කර ගැනීමට නිර්දේශ කර ඇති මෙවලම කුමක්ද?)</p>
+                        <div class="flex flex-col space-y-2">
+                            <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q2" value="a" class="mr-2"> a) Webpack</label>
+                            <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q2" value="b" class="mr-2"> b) Babel</label>
+                            <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q2" value="c" class="mr-2"> c) Vite</label>
+                            <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q2" value="d" class="mr-2"> d) Gulp</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="jsx" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+                <h2 class="text-3xl font-bold mb-4">JSX - JavaScript XML</h2>
+                <p class="text-lg leading-relaxed mb-4">This section dives into JSX, a syntax extension that lets you write HTML-like code within your JavaScript. Understanding JSX is fundamental to writing React components effectively.</p>
+                <div class="space-y-4 text-lg">
+                    <h3 class="text-2xl font-semibold mt-6">What is JSX? (JSX යනු කුමක්ද?)</h3>
+                    <p>JSX (JavaScript XML) is a syntax extension for JavaScript recommended by React. It allows you to write HTML-like markup directly within your JavaScript code. JSX gets compiled to regular JavaScript by tools like Babel before being executed in the browser.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">JSX (JavaScript XML) යනු React විසින් නිර්දේශ කරන ලද JavaScript සඳහා වන syntax extension එකකි. එය ඔබට ඔබගේ JavaScript code තුළ කෙලින්ම HTML වැනි markup ලිවීමට ඉඩ සලසයි. JSX browser එකේ ක්‍රියාත්මක වීමට පෙර Babel වැනි මෙවලම් මගින් සාමාන්‍ය JavaScript බවට compile කරනු ලැබේ.</p>
+                    <h3 class="text-2xl font-semibold mt-6">Example & Embedding JavaScript in JSX</h3>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/App.jsx</span>
+function App() {
+  const name = "World";
+  const greeting = "Good Morning";
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{greeting}, {name}!&lt;/h1&gt; &lt;span class="text-gray-400"&gt;{/* JavaScript variables are used here */}&lt;/span&gt;
+      &lt;p&gt;The sum of 5 and 3 is: {5 + 3}&lt;/p&gt; &lt;span class="text-gray-400"&gt;{/* JavaScript expression is evaluated */}&lt;/span&gt;
+      &lt;button onClick={() =&gt; alert('Button Clicked!')}&gt;Click Me&lt;/button&gt; &lt;span class="text-gray-400"&gt;{/* Event handler with JS function */}&lt;/span&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+                    </div>
+                    <h3 class="text-2xl font-semibold mt-6">JSX Rules (JSX නීති)</h3>
+                    <ul class="list-disc list-inside space-y-3 mt-4">
+                        <li><strong>Return a single root element (තනි root element එකක් return කරන්න):</strong> JSX expressions must have exactly one outermost element. If you need to return multiple elements, wrap them in a single `<div>`, `<>`, or `React.Fragment`.
+                            <div class="code-box">
+                                <pre><code><span class="text-green-400">// Correct</span>
+function MyComponent() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Title&lt;/h1&gt;
+      &lt;p&gt;Paragraph&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="text-green-400">// Also Correct (Fragment syntax)</span>
+function AnotherComponent() {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Title&lt;/h1&gt;
+      &lt;p&gt;Paragraph&lt;/p&gt;
+    &lt;/&gt;
+  );
+}
+
+<span class="text-red-400">// Incorrect - will cause an error</span>
+<span class="text-gray-400">/*
+function BadComponent() {
+  return (
+    &lt;h1&gt;Title&lt;/h1&gt;
+    &lt;p&gt;Paragraph&lt;/p&gt;
+  );
+}
+*/</span></code></pre>
+                            </div>
+                        </li>
+                        <li><strong>CamelCase for HTML attributes (HTML attributes සඳහා CamelCase):</strong> HTML attributes like `class` become `className` and `for` becomes `htmlFor` in JSX. This is because `class` and `for` are reserved keywords in JavaScript.
+                            <div class="code-box">
+                                <pre><code>&lt;label htmlFor="myInput"&gt;My Input:&lt;/label&gt;
+&lt;input id="myInput" className="my-class" type="text" /&gt;</code></pre>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3 class="text-2xl font-semibold mt-6">Quiz 2: JSX (ප්‍රශ්නාවලිය 2: JSX)</h3>
+                    <div id="quiz2" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 space-y-4">
+                        <div>
+                            <p class="font-medium mb-2">1. JSX යනු කුමක්ද? (What is JSX?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q3" value="a" class="mr-2"> a) A new programming language (නව programming භාෂාවක්)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q3" value="b" class="mr-2"> b) A way to write HTML-like code in JavaScript (JavaScript හි HTML-like code ලිවීමේ ක්‍රමයක්)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q3" value="c" class="mr-2"> c) A CSS preprocessor (CSS preprocessor එකක්)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q3" value="d" class="mr-2"> d) A database query language (දත්ත සමුදා විමසුම් භාෂාවක්)</label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium mb-2">2. JSX හි JavaScript expression එකක් කාවැද්දීමට කුමක් භාවිතා කරන්නේද? (What is used to embed a JavaScript expression in JSX?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q4" value="a" class="mr-2"> a) `()`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q4" value="b" class="mr-2"> b) `[]`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q4" value="c" class="mr-2"> c) `{}`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q4" value="d" class="mr-2"> d) `""`</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="components" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+                <h2 class="text-3xl font-bold mb-4">Components & Props (සංරචක සහ ගුණාංග)</h2>
+                <p class="text-lg leading-relaxed mb-4">This section explains functional components, the building blocks of React applications, and how to pass data between them using props. Understanding component structure and data flow is essential.</p>
+                <div class="space-y-4 text-lg">
+                    <h3 class="text-2xl font-semibold mt-6">Functional Components (ක්‍රියාකාරී සංරචක)</h3>
+                    <p>In modern React, we primarily use functional components. A functional component is a JavaScript function that returns JSX. The name of the component should start with an an uppercase letter.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">නූතන React වලදී, අපි මූලික වශයෙන් functional components භාවිතා කරමු. functional component එකක් යනු JSX return කරන JavaScript function එකකි. component එකේ නම uppercase අකුරකින් ආරම්භ විය යුතුය.</p>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/components/Greeting.jsx</span>
+import React from 'react';
+
+function Greeting() {
+  return &lt;h1&gt;Hello from Greeting Component!&lt;/h1&gt;;
+}
+
+export default Greeting;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Using Components & Props (Components සහ Props භාවිතා කිරීම)</h3>
+                    <p>Once a component is defined, you can use it in other components just like an HTML tag. Props are how you pass data from a parent component to a child component. They are read-only.</p>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/App.jsx</span>
+import React from 'react';
+import Greeting from './components/Greeting'; <span class="text-gray-400">// Import the component</span>
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Greeting /&gt; <span class="text-gray-400">{'/* Using the Greeting component */'}</span>
+      &lt;p&gt;This is the main App component.&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+                    </div>
+                    <h3 class="text-2xl font-semibold mt-6">Props Example</h3>
+                    <p>Here are some `UserCard` components rendered with different props passed from a parent:</p>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/components/UserCard.jsx</span>
+import React from 'react';
+
+function UserCard(props) { // props is an object containing all passed props
+  return (
+    &lt;div style={ border: '1px solid gray', padding: '10px', margin: '10px', borderRadius: '8px' }&gt;
+      &lt;h2&gt;Name: {props.name}&lt;/h2&gt;
+      &lt;p&gt;Age: {props.age}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default UserCard;</code></pre>
+                    </div>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/App.jsx (using UserCard)</span>
+import React from 'react';
+import UserCard from './components/UserCard';
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;User Profiles&lt;/h1&gt;
+      &lt;UserCard name="Alice" age={30}/&gt;
+      &lt;UserCard name="Bob" age={25}/&gt;
+      &lt;UserCard name="Charlie" age={35}/&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+                    </div>
+                    <div class="flex flex-wrap gap-4 mt-4 bg-gray-50 p-4 rounded-md border border-gray-200">
+                        <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                            <h2 class="text-lg font-bold text-blue-600">Name: Alice</h2>
+                            <p class="text-gray-600">Age: 30</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                            <h2 class="text-lg font-bold text-blue-600">Name: Bob</h2>
+                            <p class="text-gray-600">Age: 25</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                            <h2 class="text-lg font-bold text-blue-600">Name: Charlie</h2>
+                            <p class="text-gray-600">Age: 35</p>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-semibold mt-6">Destructuring Props (Props Destructuring කිරීම)</h3>
+                    <p>It's common practice to destructure props for cleaner code.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">වඩාත් පිරිසිදු code සඳහා props destructure කිරීම සාමාන්‍ය දෙයකි.</p>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/components/UserCard.jsx (with destructuring)</span>
+import React from 'react';
+
+function UserCard({ name, age }) { <span class="text-gray-400">// Destructure props directly in the function signature</span>
+  return (
+    &lt;div style=&#123;{ border: '1px solid gray', padding: '10px', margin: '10px', borderRadius: '8px' }&#125;&gt;
+      &lt;h2&gt;Name: &#123;name&#125;&lt;/h2&gt; <span class="text-gray-400">{'/* Use name directly */'}</span>
+      &lt;p&gt;Age: &#123;age&#125;&lt;/p&gt;     <span class="text-gray-400">{'/* Use age directly */'}</span>
+    &lt;/div&gt;
+  );
+}
+
+export default UserCard;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Quiz 3: Components & Props (ප්‍රශ්නාවලිය 3: සංරචක සහ Props)</h3>
+                    <div id="quiz3" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 space-y-4">
+                        <div>
+                            <p class="font-medium mb-2">1. React component එකක නම කුමන අකුරකින් ආරම්භ විය යුතුද? (What letter should a React component name start with?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q5" value="a" class="mr-2"> a) lowercase (කුඩා අකුරක්)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q5" value="b" class="mr-2"> b) uppercase (ලොකු අකුරක්)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q5" value="c" class="mr-2"> c) any character (ඕනෑම අක්ෂරයක්)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q5" value="d" class="mr-2"> d) a number (අංකයක්)</label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium mb-2">2. Props යනු කුමක්ද? (What are Props?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q6" value="a" class="mr-2"> a) Child component එකකට දත්ත modify කිරීමට (To modify data in a child component)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q6" value="b" class="mr-2"> b) Parent component එකක සිට child component එකකට දත්ත pass කිරීමට (To pass data from a parent to a child component)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q6" value="c" class="mr-2"> c) Database එකක් සමඟ අන්තර් ක්‍රියා කිරීමට (To interact with a database)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q6" value="d" class="mr-2"> d) Global state කළමනාකරණය කිරීමට (To manage global state)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="state" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+                <h2 class="text-3xl font-bold mb-4">State (තත්ත්වය)</h2>
+                <p class="text-lg leading-relaxed mb-4">This section explains how to manage dynamic data within a component using React's `useState` Hook. The interactive counter below demonstrates how state changes lead to UI updates.</p>
+                <div class="space-y-4 text-lg">
+                    <h3 class="text-2xl font-semibold mt-6">What is State? (State යනු කුමක්ද?)</h3>
+                    <p>State is data that a component can manage and change over time. When the state changes, the component re-renders to reflect the new data. React provides the `useState` Hook for managing state in functional components.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">State යනු component එකකට කාලයත් සමඟ කළමනාකරණය කිරීමට සහ වෙනස් කිරීමට හැකි දත්ත වේ. state වෙනස් වන විට, නව දත්ත පිළිබිඹු කිරීමට component එක නැවත re-render වේ. React functional components වල state කළමනාකරණය කිරීම සඳහා `useState` Hook එක සපයයි.</p>
+                    <h3 class="text-2xl font-semibold mt-6">`useState` Hook Syntax</h3>
+                    <div class="code-box">
+                        <pre><code>const [stateVariable, setStateVariable] = useState(initialValue);</code></pre>
+                        <ul class="list-disc list-inside space-y-1 mt-2 text-gray-700">
+                            <li>`stateVariable`: The current value of the state. (state එකේ වත්මන් අගය.)</li>
+                            <li>`setStateVariable`: A function to update the state. When this function is called, the component re-renders. (state එක යාවත්කාලීන කිරීමට function එකක්. මෙම function එක කැඳවූ විට, component එක re-render වේ.)</li>
+                            <li>`initialValue`: The initial value of the state. (state එකේ ආරම්භක අගය.)</li>
+                        </ul>
+                    </div>
+                    <h3 class="text-2xl font-semibold mt-6">Interactive Counter Example</h3>
+                    <p>Click the buttons to see the number change. This is a live demonstration of component state.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 text-center">
+                        <p class="text-5xl font-bold" id="counter-display">0</p>
+                        <div class="mt-4 space-x-2">
+                            <button id="increment-btn" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition">Increment (+)</button>
+                            <button id="decrement-btn" class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition">Decrement (-)</button>
+                        </div>
+                    </div>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/components/Counter.jsx</span>
+import React, {useState} from 'react'; <span class="text-gray-400">// Import useState</span>
+
+function Counter() {
+  <span class="text-gray-400">// Declare a state variable 'count' and a function 'setCount' to update it.</span>
+  <span class="text-gray-400">// Initial value of count is 0.</span>
+  const [count, setCount] = useState(0);
+
+  const increment = () => {
+    setCount(count + 1); <span class="text-gray-400">// Update the state</span>
+  };
+
+  const decrement = () => {
+    setCount(count - 1); <span class="text-gray-400">// Update the state</span>
+  };
+
+  return (
+    &lt;div style={{ textAlign: 'center', marginTop: '20px' }}&gt;
+      &lt;h1&gt;Counter: {count}&lt;/h1&gt;
+      &lt;button onClick={increment}&gt;
+        Increment (+)
+      &lt;/button&gt;
+      &lt;button onClick={decrement}&gt;
+        Decrement (-)
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default Counter;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Important Notes on State (State පිළිබඳ වැදගත් කරුණු):</h3>
+                    <ul class="list-disc list-inside space-y-3 mt-4">
+                        <li><strong>Immutability (වෙනස් නොවන බව):</strong> Never directly modify state variables. Always use the state setter function (e.g., `setCount`, `setName`).
+                            <p class="pl-4 text-gray-600">State variables කිසි විටෙකත් සෘජුවම වෙනස් නොකරන්න. සෑම විටම state setter function එක භාවිතා කරන්න (උදා: `setCount`, `setName`).</p>
+                            <div class="code-box">
+                                <pre><code><span class="text-green-400">// Incorrect:</span>
+<span class="text-red-400">// count = count + 1;</span>
+
+<span class="text-green-400">// Correct:</span>
+setCount(count + 1);</code></pre>
+                            </div>
+                        </li>
+                        <li><strong>Asynchronous Updates (අසමමුහුර්ත යාවත්කාලීන):</strong> State updates might be asynchronous. If your new state depends on the previous state, it's safer to pass a function to the setter:
+                            <p class="pl-4 text-gray-600">State updates අසමමුහුර්ත විය හැක. ඔබේ නව state එක පෙර state එක මත රඳා පවතී නම්, setter වෙත function එකක් pass කිරීම වඩාත් ආරක්ෂිතයි:</p>
+                            <div class="code-box">
+                                <pre><code>setCount(prevCount => prevCount + 1);</code></pre>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3 class="text-2xl font-semibold mt-6">Quiz 4: State (ප්‍රශ්නාවලිය 4: State)</h3>
+                    <div id="quiz4" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 space-y-4">
+                        <div>
+                            <p class="font-medium mb-2">1. Functional components වල state කළමනාකරණය කිරීමට භාවිතා කරන Hook එක කුමක්ද? (What Hook is used to manage state in functional components?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q7" value="a" class="mr-2"> a) `useEffect`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q7" value="b" class="mr-2"> b) `useContext`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q7" value="c" class="mr-2"> c) `useState`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q7" value="d" class="mr-2"> d) `useReducer`</label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium mb-2">2. පහත සඳහන් දේවලින් state එක යාවත්කාලීන කිරීමට නිවැරදි ක්‍රමය කුමක්ද? (Which of the following is the correct way to update state?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q8" value="a" class="mr-2"> a) `count = 5;`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q8" value="b" class="mr-2"> b) `setCount(5);`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q8" value="c" class="mr-2"> c) `this.state.count = 5;`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q8" value="d" class="mr-2"> d) `count++;`</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="events" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+                 <h2 class="text-3xl font-bold mb-4">Event Handling (සිදුවීම් හැසිරවීම)</h2>
+                 <p class="text-lg leading-relaxed mb-4">This section covers how to handle user interactions like clicks and input changes in React. The interactive demo shows how events trigger updates in your application.</p>
+                 <div class="space-y-4 text-lg">
+                    <p>In React, you handle events like `onClick`, `onChange`, `onSubmit` directly on the JSX elements. The event handlers are functions.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">React හිදී, ඔබ `onClick`, `onChange`, `onSubmit` වැනි events සෘජුවම JSX elements මත handle කරයි. event handlers යනු functions වේ.</p>
+                    <h3 class="text-2xl font-semibold mt-6">Interactive Demo</h3>
+                    <p>Click the button or type in the input field to see the message change!</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4">
+                        <p class="text-lg font-medium mb-4" id="event-message">Click the button or type in the box!</p>
+                        <button id="event-click-btn" class="bg-green-500 text-white px-4 py-2 rounded-md mr-4 hover:bg-green-600 transition">Click Me</button>
+                        <input type="text" id="event-input" placeholder="Type something..." class="p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/components/EventDemo.jsx</span>
+import React, { useState } from 'react';
+
+function EventDemo() {
+  const [message, setMessage] = useState('Click a button!');
+
+  const handleClick = () => {
+    setMessage('Button was clicked!');
+  };
+
+  const handleChange = (event) => {
+    setMessage(`Input value changed: ${event.target.value}`);
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Event Handling Demo&lt;/h2&gt;
+      &lt;p&gt;{message}&lt;/p&gt;
+      &lt;button onClick={handleClick}&gt;
+        Click Me
+      &lt;/button&gt;
+      &lt;input
+        type="text"
+        onChange={handleChange}
+        placeholder="Type something..."
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default EventDemo;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Passing Arguments to Event Handlers (Event Handlers වෙත Arguments යැවීම):</h3>
+                    <p>If you need to pass an argument to an event handler, you can use an arrow function.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">ඔබට event handler එකකට argument එකක් යැවීමට අවශ්‍ය නම්, ඔබට arrow function එකක් භාවිතා කළ හැකිය.</p>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/components/ItemLister.jsx</span>
+import React from 'react';
+
+function ItemLister() {
+  const items = ['Apple', 'Banana', 'Cherry'];
+
+  const handleItemClick = (item) => {
+    alert(`You clicked on: ${item}`);
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Item List&lt;/h2&gt;
+      &lt;ul&gt;
+        {items.map((item, index) => (
+          // Using an arrow function to pass 'item' as an argument
+          &lt;li key={index} onClick={() =&gt; handleItemClick(item)}&gt;
+            {item}
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default ItemLister;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Quiz 5: Event Handling (ප්‍රශ්නාවලිය 5: සිදුවීම් හැසිරවීම)</h3>
+                    <div id="quiz5" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 space-y-4">
+                        <div>
+                            <p class="font-medium mb-2">1. React හිදී `onClick` වැනි event handlers කුමන attribute ලෙස ලියන්නේද? (In React, how are event handlers like `onClick` written as attributes?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q9" value="a" class="mr-2"> a) `onclick` (lowercase)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q9" value="b" class="mr-2"> b) `onClick` (camelCase)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q9" value="c" class="mr-2"> c) `ONCLICK` (uppercase)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q9" value="d" class="mr-2"> d) `on-click` (kebab-case)</label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium mb-2">2. Event handler එකකට argument එකක් යැවීමට ඔබ භාවිතා කරන JavaScript function වර්ගය කුමක්ද? (What type of JavaScript function do you typically use to pass an argument to an event handler?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q10" value="a" class="mr-2"> a) Named function (නමක් ඇති function එකක්)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q10" value="b" class="mr-2"> b) Arrow function (Arrow function එකක්)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q10" value="c" class="mr-2"> c) Constructor function (Constructor function එකක්)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q10" value="d" class="mr-2"> d) Callback function (Callback function එකක්)</label>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+
+            <div id="conditional" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+                 <h2 class="text-3xl font-bold mb-4">Conditional Rendering (කොන්දේසි සහිත Rendering)</h2>
+                 <p class="text-lg leading-relaxed mb-4">This section explores how to render different parts of your UI based on specific conditions. The interactive login/logout demo illustrates this concept practically.</p>
+                 <div class="space-y-4 text-lg">
+                    <p>Conditional rendering in React allows you to render different elements or components based on certain conditions.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">React හි conditional rendering මඟින් ඔබට යම් යම් කොන්දේසි මත පදනම්ව විවිධ elements හෝ components render කිරීමට ඉඩ සලසයි.</p>
+                    <h3 class="text-2xl font-semibold mt-6">Interactive Login/Logout Demo</h3>
+                    <p>Click the button to toggle the login status and see the message change!</p>
+                    <div id="conditional-demo" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 text-center">
+                        <p class="text-xl font-semibold mb-4" id="conditional-message">Please log in.</p>
+                        <button id="conditional-toggle-btn" class="bg-indigo-500 text-white px-6 py-2 rounded-md hover:bg-indigo-600 transition">Login</button>
+                    </div>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/components/LoginControl.jsx</span>
+import React, {'{'} useState {'}'} from 'react';
+
+function LoginControl() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLoginClick = () => setIsLoggedIn(true);
+  const handleLogoutClick = () => setIsLoggedIn(false);
+
+  let button;
+  if (isLoggedIn) {
+    button = &lt;button onClick={handleLogoutClick}&gt;Logout&lt;/button&gt;;
+  } else {
+    button = &lt;button onClick={handleLoginClick}&gt;Login&lt;/button&gt;;
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Conditional Rendering Demo&lt;/h2&gt;
+      {isLoggedIn ? &lt;p&gt;Welcome back!&lt;/p&gt; : &lt;p&gt;Please log in.&lt;/p&gt;}
+      {button}
+    &lt;/div&gt;
+  );
+}
+
+export default LoginControl;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Ternary Operator (ත්‍රිත්ව ක්‍රියාකරු - `condition ? true : false`)</h3>
+                    <p>This is concise for simple conditions within JSX.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">JSX තුළ සරල කොන්දේසි සඳහා මෙය කෙටියෙන් භාවිතා කළ හැක.</p>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// Inside a component's return</span>
+return (
+  &lt;div&gt;
+    {isLoggedIn ? &lt;p&gt;Welcome back!&lt;/p&gt; : &lt;p&gt;Please log in.&lt;/p&gt;}
+  &lt;/div&gt;
+);</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Logical `&&` Operator (තාර්කික `&&` ක්‍රියාකරු)</h3>
+                    <p>If you want to render something only when a condition is true (and nothing when false), you can use `&&`.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">යම් කොන්දේසියක් සත්‍ය වූ විට පමණක් (සහ අසත්‍ය වූ විට කිසිවක් නැති විට) යමක් render කිරීමට අවශ්‍ය නම්, ඔබට `&&` භාවිතා කළ හැක.</p>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// Inside a component's return</span>
+return (
+  &lt;div&gt;
+    {isLoggedIn && &lt;p&gt;You are logged in.&lt;/p&gt;} <span class="text-gray-400">{'/* Renders only if isLoggedIn is true */'}</span>
+  &lt;/div&gt;
+);</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Quiz 6: Conditional Rendering (ප්‍රශ්නාවලිය 6: කොන්දේසි සහිත Rendering)</h3>
+                    <div id="quiz6" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 space-y-4">
+                        <div>
+                            <p class="font-medium mb-2">1. React හිදී යම් කොන්දේසියක් සත්‍ය වූ විට පමණක් element එකක් render කිරීමට භාවිතා කළ හැකි ක්‍රියාකරු කුමක්ද? (What operator can be used in React to render an element only when a condition is true?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q11" value="a" class="mr-2"> a) `||`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q11" value="b" class="mr-2"> b) `??`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q11" value="c" class="mr-2"> c) `&&`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q11" value="d" class="mr-2"> d) `!`</label>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+
+            <div id="lists" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+                <h2 class="text-3xl font-bold mb-4">List Rendering (ලැයිස්තු Rendering)</h2>
+                <p class="text-lg leading-relaxed mb-4">This section focuses on how to display collections of data in React. Learn about the importance of the `key` prop for efficient list rendering.</p>
+                <div class="space-y-4 text-lg">
+                    <p>In React, you render lists of elements using the `map()` array method. Each item in the list must have a unique `key` prop. The `key` helps React identify which items have changed, are added, or are removed, improving performance.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">React හිදී, ඔබ `map()` array method එක භාවිතයෙන් elements ලැයිස්තු render කරයි. ලැයිස්තුවේ ඇති සෑම අයිතමයකටම අද්විතීය `key` prop එකක් තිබිය යුතුය. `key` මඟින් React හට වෙනස් වී ඇති, එකතු කර ඇති, හෝ ඉවත් කර ඇති අයිතම හඳුනා ගැනීමට උපකාරී වන අතර, කාර්ය සාධනය වැඩි දියුණු කරයි.</p>
+                    <h3 class="text-2xl font-semibold mt-6">Fruit List Example</h3>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4">
+                        <p class="font-medium text-xl mb-2">My Favorite Fruits:</p>
+                        <ul id="fruit-list" class="list-disc list-inside space-y-2">
+                            <li>Apple</li>
+                            <li>Banana</li>
+                            <li>Orange</li>
+                            <li>Mango</li>
+                        </ul>
+                    </div>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/components/FruitList.jsx</span>
+import React from 'react';
+
+function FruitList() {
+  const fruits = ['Apple', 'Banana', 'Orange', 'Mango'];
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;My Fruit List&lt;/h2&gt;
+      &lt;ul&gt;
+        {fruits.map((fruit, index) => (
+          <span class="text-gray-400">// Each list item needs a unique 'key' prop.</span>
+          <span class="text-gray-400">// Using index as key is acceptable if list items are static and their order doesn't change.</span>
+          <span class="text-gray-400">// For dynamic lists, a unique ID from the data itself is preferred.</span>
+          &lt;li key={index}&gt;
+            {fruit}
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default FruitList;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Important `key` Prop (වැදගත් key Prop):</h3>
+                    <ul class="list-disc list-inside space-y-3 mt-4">
+                        <li><strong>Unique Value (අද්විතීය අගය):</strong> The `key` prop should be a unique string or number for each item in the list.</li>
+                        <li>This is crucial for React's reconciliation process to efficiently update lists, preventing unnecessary re-renders and potential bugs when list items change order, are added, or removed. Using a stable, unique ID from your data ensures React can correctly identify each element.
+                            <p class="pl-4 text-gray-600">Static lists සඳහා index key එකක් ලෙස භාවිතා කිරීම සාර්ථක වුවද, ලැයිස්තු අයිතමවල අනුපිළිවෙල වෙනස් වුවහොත්, එකතු කළහොත්, හෝ ඉවත් කළහොත් ගැටළු සහ කාර්ය සාධන ගැටළු ඇති විය හැක. සෑම විටම ඔබේ දත්ත වලින් අද්විතීය ID එකක් (උදා: `item.id`) භාවිතා කිරීමට කැමති වන්න.</p>
+                        </li>
+                    </ul>
+
+                    <h3 class="text-2xl font-semibold mt-6">Quiz 7: List Rendering (ප්‍රශ්නාවලිය 7: ලැයිස්තු Rendering)</h3>
+                    <div id="quiz7" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 space-y-4">
+                        <div>
+                            <p class="font-medium mb-2">1. React හිදී elements ලැයිස්තුවක් render කිරීමට භාවිතා කරන array method එක කුමක්ද? (What array method is used to render a list of elements in React?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q12" value="a" class="mr-2"> a) `filter()`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q12" value="b" class="mr-2"> b) `reduce()`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q12" value="c" class="mr-2"> c) `map()`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q12" value="d" class="mr-2"> d) `forEach()`</label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium mb-2">2. List එකක ඇති සෑම item එකකටම තිබිය යුතු අද්විතීය prop එක කුමක්ද? (What unique prop must each item in a list have?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q13" value="a" class="mr-2"> a) `id`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q13" value="b" class="mr-2"> b) `value`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q13" value="c" class="mr-2"> c) `key`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q13" value="d" class="mr-2"> d) `name`</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="effects" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+                <h2 class="text-3xl font-bold mb-4">useEffect Hook (ප්‍රතික්‍රියා Hook)</h2>
+                <p class="text-lg leading-relaxed mb-4">This section introduces the `useEffect` Hook, a powerful tool for performing side effects in your React components. The data fetching and timer demos illustrate its practical applications.</p>
+                <div class="space-y-4 text-lg">
+                    <p>The `useEffect` Hook lets you perform "side effects" in functional components. Side effects include data fetching, subscriptions, or manually changing the DOM. It runs after every render of the component, but you can control when it runs using the dependency array.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">`useEffect` Hook මඟින් ඔබට functional components වල "side effects" සිදු කිරීමට ඉඩ සලසයි. Side effects වලට data fetching, subscriptions, හෝ DOM එක manually වෙනස් කිරීම ඇතුළත් වේ. එය component එක render කිරීමෙන් පසු සෑම විටම ක්‍රියාත්මක වේ, නමුත් ඔබට dependency array එක භාවිතයෙන් එය ක්‍රියාත්මක විය යුත්තේ කවදාදැයි පාලනය කළ හැක.</p>
+                    <h3 class="text-2xl font-semibold mt-6">`useEffect` Syntax (සිංටැක්ස්):</h3>
+                    <div class="code-box">
+                        <pre><code>useEffect(() => {
+  <span class="text-gray-400">// Side effect code here</span>
+  return () => {
+    <span class="text-gray-400">// Cleanup function (optional) - runs when component unmounts or before effect re-runs</span>
+  };
+}, [dependencies]); <span class="text-gray-400">// Dependency array (optional) - controls when the effect re-runs</span></code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Common `useEffect` Use Cases (සාමාන්‍ය භාවිත අවස්ථා):</h3>
+                    <ol class="list-decimal list-inside space-y-3 mt-4">
+                        <li><strong>Run once on mount (Component එක load වන විට එක් වරක් ක්‍රියාත්මක කරන්න):</strong>
+                            <p>Pass an empty dependency array `[]`. This is useful for fetching initial data when the component first loads, similar to `componentDidMount` in class components.</p>
+                            <p class="text-sm pl-4 text-gray-600">හිස් dependency array එකක් `[]` pass කරන්න. component එක මුලින්ම load වන විට data fetching කිරීම සඳහා මෙය ප්‍රයෝජනවත් වේ.</p>
+                            <h4 class="text-xl font-semibold mt-4">Data Fetching Demo</h4>
+                            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-2" id="data-fetcher-demo">
+                                <p class="text-gray-600">Loading data from a placeholder API...</p>
+                            </div>
+                            <div class="code-box">
+                                <pre><code><span class="text-green-400">// src/components/DataFetcher.jsx</span>
+import React, { useState, useEffect } from 'react';
+
+function DataFetcher() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    <span class="text-gray-400">// This runs only once after the initial render (componentDidMount equivalent)</span>
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/todos/1');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        setData(result);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []); <span class="text-gray-400">// Empty dependency array means it runs once on mount</span>
+
+  if (loading) return &lt;p&gt;Loading data...&lt;/p&gt;;
+  if (error) return &lt;p&gt;Error: {error.message}&lt;/p&gt;;
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Fetched Data (useEffect - Mount)&lt;/h2&gt;
+      &lt;p&gt;Title: {data.title}&lt;/p&gt;
+      &lt;p&gt;Completed: {data.completed ? 'Yes' : 'No'}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default DataFetcher;</code></pre>
+                            </div>
+                        </li>
+                        <li><strong>Run on every render (dependencies නැත්නම් සෑම render එකකදීම ක්‍රියාත්මක කරන්න):</strong>
+                            <p>Omit the dependency array. This is less common as it runs after every render, potentially leading to performance issues if not careful. Use this only when your effect should re-run on any state or prop change.</p>
+                            <p class="text-sm pl-4 text-gray-600">Dependency array එක අතහරින්න. මෙය එතරම් සුලභ නොවේ, මන්ද එය සෑම render එකකින් පසු ක්‍රියාත්මක වන අතර, ප්‍රවේශම් නොවන්නේ නම් කාර්ය සාධන ගැටළු ඇති විය හැක.</p>
+                            <div class="code-box">
+                                <pre><code><span class="text-green-400">// Example (avoid in production unless specific need)</span>
+useEffect(() => {
+  console.log("This runs after every render.");
+});</code></pre>
+                            </div>
+                        </li>
+                        <li><strong>Run when dependencies change (යැපීම් වෙනස් වන විට ක්‍රියාත්මක කරන්න):</strong>
+                            <p>Include variables in the dependency array. The effect will re-run only when those variables change. This is critical for controlling when side effects occur and avoiding infinite loops.</p>
+                            <p class="text-sm pl-4 text-gray-600">Dependency array එකට variables ඇතුළත් කරන්න. එම variables වෙනස් වන විට පමණක් effect එක නැවත ක්‍රියාත්මක වේ.</p>
+                            <h4 class="text-xl font-semibold mt-4">Name & Age Display Demo</h4>
+                            <p>Observe the console log when you change name or age.</p>
+                            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-2">
+                                <p>Current Name: <span id="name-display-text" class="font-bold">John</span></p>
+                                <p>Current Age: <span id="age-display-text" class="font-bold">30</span></p>
+                                <div class="mt-4 space-x-2">
+                                    <button id="change-name-btn" class="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition">Change Name</button>
+                                    <button id="increase-age-btn" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">Increase Age</button>
+                                </div>
+                            </div>
+                            <div class="code-box">
+                                <pre><code><span class="text-green-400">// src/components/NameDisplay.jsx</span>
+import React, { useState, useEffect } from 'react';
+
+function NameDisplay() {
+  const [name, setName] = useState('John');
+  const [age, setAge] = useState(30);
+
+  useEffect(() => {
+    console.log(`Name changed to: ${name}`);
+    <span class="text-gray-400">// This effect runs whenever 'name' changes</span>
+  }, [name]); <span class="text-gray-400">// Dependency on 'name'</span>
+
+  useEffect(() => {
+    console.log(`Age changed to: ${age}`);
+    <span class="text-gray-400">// This effect runs whenever 'age' changes</span>
+  }, [age]); <span class="text-gray-400">// Dependency on 'age'</span>
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Name & Age Display (useEffect - Dependencies)&lt;/h2&gt;
+      &lt;p&gt;Current Name: {name}&lt;/p&gt;
+      &lt;p&gt;Current Age: {age}&lt;/p&gt;
+      &lt;button onClick={() => setName('Jane')}&gt;
+        Change Name
+      &lt;/button&gt;
+      &lt;button onClick={() => setAge(age + 1)}&gt;
+        Increase Age
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default NameDisplay;</code></pre>
+                            </div>
+                        </li>
+                        <li><strong>Cleanup function (පිරිසිදු කිරීමේ function):</strong>
+                            <p>The return statement of `useEffect` can be a cleanup function. This function runs when the component unmounts or before the effect re-runs due to dependency changes. It's crucial for preventing memory leaks and avoiding unexpected behavior, especially for subscriptions, timers, or direct DOM manipulations.</p>
+                            <p class="text-sm pl-4 text-gray-600">`useEffect` හි return statement එක cleanup function එකක් විය හැක. මෙම function එක component එක unmount වන විට හෝ dependency වෙනස්වීම් නිසා effect එක නැවත ක්‍රියාත්මක වීමට පෙර ක්‍රියාත්මක වේ. events වලින් unsubscribe වීමට, timers ඉවත් කිරීමට වැනි දේ සඳහා මෙය ප්‍රයෝජනවත් වේ.</p>
+                            <h4 class="text-xl font-semibold mt-4">Live Timer Demo with Cleanup</h4>
+                            <p>This timer automatically cleans up its interval when this section is navigated away from (or if it were unmounted in a real app).</p>
+                            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-2 text-center">
+                                <p class="text-2xl">Seconds on page: <span id="timer-demo" class="font-bold text-blue-600">0</span></p>
+                            </div>
+                            <div class="code-box">
+                                <pre><code><span class="text-green-400">// src/components/Timer.jsx</span>
+import React, { useState, useEffect } from 'react';
+
+function Timer() {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    <span class="text-gray-400">// Set up the interval</span>
+    const intervalId = setInterval(() => {
+      setSeconds(prevSeconds => prevSeconds + 1);
+    }, 1000);
+
+    <span class="text-gray-400">// Return a cleanup function</span>
+    return () => {
+      clearInterval(intervalId); <span class="text-gray-400">// Clear the interval when component unmounts or effect re-runs</span>
+      console.log('Timer cleanup performed!');
+    };
+  }, []); <span class="text-gray-400">// Run once on mount, cleanup on unmount</span>
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Timer (useEffect - Cleanup)&lt;/h2&gt;
+      &lt;p&gt;Seconds: {seconds}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default Timer;</code></pre>
+                            </div>
+                        </li>
+                    </ol>
+
+                    <h3 class="text-2xl font-semibold mt-6">`useRef` Hook (ප්‍රතික්‍රියා Hook)</h3>
+                    <p>`useRef` is a Hook that lets you reference a value that’s not needed for rendering. It’s primarily used for direct interaction with DOM elements or to store mutable values that don't trigger re-renders.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">`useRef` යනු rendering සඳහා අවශ්‍ය නොවන අගයක් වෙත යොමු වීමට ඔබට ඉඩ සලසන Hook එකකි. එය ප්‍රධාන වශයෙන් DOM elements සමඟ සෘජු අන්තර්ක්‍රියා සඳහා හෝ re-renders ඇති නොකරන mutable values ගබඩා කිරීමට භාවිතා කරයි.</p>
+                    <h4 class="text-xl font-semibold mt-4">Focus Input with `useRef` Demo</h4>
+                    <p>Click the button to automatically focus the input field. This demonstrates direct DOM manipulation using `useRef`.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-2 text-center">
+                        <input type="text" id="focus-input-demo" class="p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Click button to focus me">
+                        <button id="focus-btn" class="bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600 transition ml-2">Focus Input</button>
+                    </div>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// Example using useRef to focus an input</span>
+import React, { useRef } from 'react';
+
+function FocusInput() {
+  const inputRef = useRef(null); <span class="text-gray-400">// Create a ref object</span>
+
+  const handleClick = () => {
+    inputRef.current.focus(); <span class="text-gray-400">// Access the DOM element and call focus()</span>
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;input type="text" ref={inputRef} /&gt; <span class="text-gray-400">// Attach the ref to the input element</span>
+      &lt;button onClick={handleClick}&gt;Focus Input&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default FocusInput;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Quiz 8: `useEffect` & `useRef` (ප්‍රශ්නාවලිය 8: `useEffect` & `useRef`)</h3>
+                    <div id="quiz8" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 space-y-4">
+                        <div>
+                            <p class="font-medium mb-2">1. `useEffect` Hook එකේ dependency array එක හිස්ව තැබුවහොත් (උදා: `[]`), effect එක ක්‍රියාත්මක වන්නේ කවදාද? (When does an effect run if the `useEffect` Hook's dependency array is empty (e.g., `[]`)?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q14" value="a" class="mr-2"> a) සෑම render එකකින් පසු (After every render)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q14" value="b" class="mr-2"> b) Component එක mount වන විට එක් වරක් පමණි (Only once when the component mounts)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q14" value="c" class="mr-2"> c) කිසි විටෙකත් ක්‍රියාත්මක නොවේ (Never runs)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q14" value="d" class="mr-2"> d) Component එක unmount වන විට පමණි (Only when the component unmounts)</label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium mb-2">2. `useEffect` Hook එකකින් return කරන function එකේ අරමුණ කුමක්ද? (What is the purpose of the function returned from a `useEffect` Hook?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q15" value="a" class="mr-2"> a) State යාවත්කාලීන කිරීමට (To update state)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q15" value="b" class="mr-2"> b) Props pass කිරීමට (To pass props)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q15" value="c" class="mr-2"> c) Side effect එකක් පිරිසිදු කිරීමට (To clean up a side effect)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q15" value="d" class="mr-2"> d) Component එක නැවත render කිරීමට (To re-render the component)</label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium mb-2">3. `useRef` Hook එකේ ප්‍රධාන භාවිතය කුමක්ද? (What is the primary use of the `useRef` Hook?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q_useRef" value="a" class="mr-2"> a) State කළමනාකරණය කිරීමට (To manage state)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q_useRef" value="b" class="mr-2"> b) DOM elements සමඟ සෘජුව අන්තර් ක්‍රියා කිරීමට (To directly interact with DOM elements)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q_useRef" value="c" class="mr-2"> c) Side effects සිදු කිරීමට (To perform side effects)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q_useRef" value="d" class="mr-2"> d) Context share කිරීමට (To share context)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="forms" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+                <h2 class="text-3xl font-bold mb-4">Forms (ආකෘති)</h2>
+                <p class="text-lg leading-relaxed mb-4">This section explains how to handle forms in React, focusing on "controlled components" where React state manages form input values. The interactive form below demonstrates this pattern.</p>
+                <div class="space-y-4 text-lg">
+                    <p>In React, handling forms often involves controlling the input elements with state. This is known as "controlled components."</p>
+                    <p class="pl-4 border-l-4 border-blue-300">React හිදී, forms හැසිරවීම බොහෝ විට state එක සමඟ input elements පාලනය කිරීම ඇතුළත් වේ. මෙය "controlled components" ලෙස හැඳින්වේ.</p>
+                    <h3 class="text-2xl font-semibold mt-6">Interactive Feedback Form</h3>
+                    <p>Fill out the form and submit it to see how React's state can control and capture input values.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                            <form id="feedback-form" class="space-y-4">
+                                <div>
+                                    <label for="form-name" class="block font-medium text-gray-700">Name:</label>
+                                    <input type="text" id="form-name" class="w-full p-2 border rounded-md mt-1 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                 <div>
+                                    <label for="form-feedback" class="block font-medium text-gray-700">Feedback:</label>
+                                    <textarea id="form-feedback" class="w-full p-2 border rounded-md mt-1 focus:ring-blue-500 focus:border-blue-500" rows="3"></textarea>
+                                </div>
+                                <button type="submit" class="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-purple-600 transition">Submit</button>
+                            </form>
+                        </div>
+                        <div class="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200" id="form-output-display">
+                            <h3 class="text-2xl font-semibold text-blue-800">Form Output</h3>
+                            <p class="mt-4 text-gray-600">Submit the form to see the output here.</p>
+                        </div>
+                    </div>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/components/FeedbackForm.jsx</span>
+import React, { useState } from 'react';
+
+function FeedbackForm() {
+  const [name, setName] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [rating, setRating] = useState('good');
+
+  const handleSubmit = (event) => {
+    event.preventDefault(); <span class="text-gray-400">// Prevent default form submission behavior</span>
+    alert(`Feedback Submitted!\\nName: ${name}\\nFeedback: ${feedback}\\nRating: ${rating}`);
+    <span class="text-gray-400">// You would typically send this data to a server here</span>
+    setName(''); <span class="text-gray-400">// Clear form fields</span>
+    setFeedback('');
+    setRating('good');
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Feedback Form (Controlled Components)&lt;/h2&gt;
+      &lt;form onSubmit={handleSubmit}&gt;
+        &lt;div&gt;
+          &lt;label htmlFor="name"&gt;Name:&lt;/label&gt;
+          &lt;input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required /&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label htmlFor="feedback"&gt;Your Feedback:&lt;/label&gt;
+          &lt;textarea id="feedback" value={feedback} onChange={(e) => setFeedback(e.target.value)} rows="4"&gt;&lt;/textarea&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label htmlFor="rating"&gt;Rating:&lt;/label&gt;
+          &lt;select id="rating" value={rating} onChange={(e) => setRating(e.target.value)}&gt;
+            &lt;option value="good"&gt;Good&lt;/option&gt;
+            &lt;option value="neutral"&gt;Neutral&lt;/option&gt;
+            &lt;option value="bad"&gt;Bad&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+        &lt;button type="submit"&gt;Submit Feedback&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default FeedbackForm;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Quiz 9: Forms (ප්‍රශ්නාවලිය 9: ආකෘති)</h3>
+                    <div id="quiz9" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 space-y-4">
+                        <div>
+                            <p class="font-medium mb-2">1. React හිදී input elements වල value state එකකින් පාලනය කරන විට එය හඳුන්වන්නේ කුමක් ලෙසද? (What is it called when an input element's value is controlled by React state?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q16" value="a" class="mr-2"> a) Uncontrolled component (පාලනය නොවන component)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q16" value="b" class="mr-2"> b) Controlled component (පාලනය කරන ලද component)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q16" value="c" class="mr-2"> c) Static component (Static component)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q16" value="d" class="mr-2"> d) Stateless component (Stateless component)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="context" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+                <h2 class="text-3xl font-bold mb-4">Context API (සන්දර්භ API) - Basic Concept</h2>
+                <p class="text-lg leading-relaxed mb-4">This section introduces the Context API, a solution for passing "global" data through your component tree without explicit prop drilling. The theme switcher demonstrates how Context simplifies data sharing.</p>
+                <div class="space-y-4 text-lg">
+                    <p>The Context API provides a way to pass data through the component tree without having to pass props down manually at every level. This is useful for "global" data like user authentication status, theme, or preferred language.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">Context API මඟින් component tree එක හරහා දත්ත යැවීමට ක්‍රමයක් සපයයි, සෑම මට්ටමකදීම props අතින් pass නොකර. user authentication status, theme, හෝ කැමති භාෂාව වැනි "global" දත්ත සඳහා මෙය ප්‍රයෝජනවත් වේ.</p>
+                    <h3 class="text-2xl font-semibold mt-6">Core steps (ප්‍රධාන පියවර):</h3>
+                    <ol class="list-decimal list-inside space-y-3 mt-4">
+                        <li><strong>`createContext`:</strong> Create a Context object.</li>
+                        <li><strong>`Provider`:</strong> The Context object comes with a Provider React component. It allows consuming components to subscribe to context changes.</li>
+                        <li><strong>`useContext`:</strong> A Hook to consume the context in functional components.</li>
+                    </ol>
+                    <h3 class="text-2xl font-semibold mt-6">Theme Switcher Demo</h3>
+                    <p>Click the button to change the theme of this section, illustrating how Context can manage application-wide state.</p>
+                    <div id="theme-demo-container" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 transition-colors duration-300 text-center">
+                        <p id="theme-demo-text" class="text-lg font-medium mb-4 text-gray-800">Current Theme: Light</p>
+                        <button id="theme-toggle-btn" class="bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-700 transition">Toggle Theme</button>
+                    </div>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/contexts/ThemeContext.jsx</span>
+import React, { createContext, useState, useContext } from 'react';
+
+<span class="text-gray-400">// 1. Create the Context</span>
+export const ThemeContext = createContext(null);
+
+<span class="text-gray-400">// 2. Create a Provider component</span>
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState('light'); <span class="text-gray-400">// Default theme</span>
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+
+  const contextValue = { theme, toggleTheme };
+
+  return (
+    &lt;ThemeContext.Provider value={contextValue}&gt;
+      {children}
+    &lt;/ThemeContext.Provider&gt;
+  );
+};
+
+<span class="text-gray-400">// Optional: A custom hook to easily consume the context</span>
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};</code></pre>
+                    </div>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/components/ThemeSwitcher.jsx</span>
+import React from 'react';
+import { useTheme } from '../contexts/ThemeContext'; <span class="text-gray-400">// Import the custom hook</span>
+
+function ThemeSwitcher() {
+  const { theme, toggleTheme } = useTheme(); <span class="text-gray-400">// Consume the context</span>
+
+  const cardStyle = {
+    padding: '20px',
+    margin: '20px',
+    borderRadius: '8px',
+    border: `1px solid ${theme === 'light' ? '#eee' : '#555'}`,
+    backgroundColor: theme === 'light' ? '#fff' : '#333',
+    color: theme === 'light' ? '#333' : '#eee',
+    textAlign: 'center',
+  };
+
+  const buttonStyle = {
+    padding: '10px 20px',
+    backgroundColor: theme === 'light' ? '#007bff' : '#6c757d',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    fontSize: '16px',
+    marginTop: '15px',
+  };
+
+  return (
+    &lt;div style={cardStyle}&gt;
+      &lt;h2&gt;Theme Context Demo&lt;/h2&gt;
+      &lt;p&gt;Current Theme: {theme.toUpperCase()}&lt;/p&gt;
+      &lt;button onClick={toggleTheme} style={buttonStyle}&gt;
+        Toggle Theme
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default ThemeSwitcher;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Quiz 10: Context API (ප්‍රශ්නාවලිය 10: Context API)</h3>
+                    <div id="quiz10" class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-4 space-y-4">
+                        <div>
+                            <p class="font-medium mb-2">1. Context API හි `Provider` component එකේ අරමුණ කුමක්ද? (What is the purpose of the `Provider` component in Context API?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q17" value="a" class="mr-2"> a) Context එකේ value එක pass කිරීමට (To pass the value of the context)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q17" value="b" class="mr-2"> b) Context එකේ value එක modify කිරීමට (To modify the value of the context)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q17" value="c" class="mr-2"> c) Context එකෙන් value එක consume කිරීමට (To consume the value from the context)</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q17" value="d" class="mr-2"> d) නව Context එකක් නිර්මාණය කිරීමට (To create a new Context)</label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium mb-2">2. Functional components වල context එක consume කිරීමට භාවිතා කරන Hook එක කුමක්ද? (What Hook is used to consume context in functional components?)</p>
+                            <div class="flex flex-col space-y-2">
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q18" value="a" class="mr-2"> a) `useState`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q18" value="b" class="mr-2"> b) `useEffect`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q18" value="c" class="mr-2"> c) `useContext`</label>
+                                <label class="quiz-option p-3 border rounded-md cursor-pointer hover:bg-gray-50"><input type="radio" name="q18" value="d" class="mr-2"> d) `useReducer`</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="advanced" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+                <h2 class="text-3xl font-bold mb-4">Advanced Concepts (උසස් සංකල්ප) - Brief Overview</h2>
+                <p class="text-lg leading-relaxed mb-4">This section provides a brief overview of more advanced React concepts for those looking to deepen their knowledge and optimize their applications.</p>
+                <div class="space-y-4 text-lg">
+                    <h3 class="text-2xl font-semibold mt-6">Custom Hooks (Custom Hooks)</h3>
+                    <p>Custom Hooks are JavaScript functions whose names start with "use" and that may call other Hooks. They allow you to reuse stateful logic across multiple components.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">Custom Hooks යනු "use" යන වචනයෙන් ආරම්භ වන සහ වෙනත් Hooks කැඳවිය හැකි JavaScript functions වේ. ඒවා ඔබට බොහෝ components හරහා stateful logic නැවත භාවිතා කිරීමට ඉඩ සලසයි.</p>
+                    <div class="code-box">
+                        <pre><code><span class="text-green-400">// src/hooks/useCounter.jsx</span>
+import { useState, useCallback } from 'react';
+
+function useCounter(initialValue = 0) {
+  const [count, setCount] = useState(initialValue);
+
+  const increment = useCallback(() => {
+    setCount(prevCount => prevCount + 1);
+  }, []); <span class="text-gray-400">// Empty dependency array means this function is stable</span>
+
+  const decrement = useCallback(() => {
+    setCount(prevCount => prevCount - 1);
+  }, []); <span class="text-gray-400">// Empty dependency array means this function is stable</span>
+
+  const reset = useCallback(() => {
+    setCount(initialValue);
+  }, [initialValue]); <span class="text-gray-400">// Resets to initialValue if initialValue changes</span>
+
+  return { count, increment, decrement, reset };
+}
+
+export default useCounter;</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mt-6">Error Boundaries (දෝෂ සීමා)</h3>
+                    <p>Error Boundaries are React components that catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI instead of the component tree that crashed.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">Error Boundaries යනු ඔවුන්ගේ child component tree එකේ ඕනෑම තැනක ඇති JavaScript දෝෂ හසුකර ගන්නා, එම දෝෂ log කරන, සහ crash වූ component tree එක වෙනුවට fallback UI එකක් පෙන්වන React components වේ.</p>
+
+                    <h3 class="text-2xl font-semibold mt-6">Performance Optimization (කාර්ය සාධන ප්‍රශස්තිකරණය)</h3>
+                    <ul class="list-disc list-inside space-y-3 mt-4">
+                        <li><strong>`React.memo` :</strong> A higher-order component that prevents a functional component from re-rendering if its props have not changed.</li>
+                        <li><strong>`useCallback` :</strong> Returns a memoized callback function. Useful for preventing unnecessary re-renders of child components that rely on functions passed as props.</li>
+                        <li><strong>`useMemo` :</strong> Returns a memoized value. Useful for expensive calculations that don't need to be re-computed on every render.</li>
+                    </ul>
+
+                    <h3 class="text-2xl font-semibold mt-6">Routing (Routing)</h3>
+                    <p>For single-page applications (SPAs), you typically use a routing library like `React Router` to manage navigation between different views or pages without full page reloads.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">Single-page applications (SPAs) සඳහා, සම්පූර්ණ page reloads නොමැතිව විවිධ views හෝ pages අතර navigation කළමනාකරණය කිරීමට සාමාන්‍යයෙන් `React Router` වැනි routing library එකක් භාවිතා කරයි.</p>
+
+                    <h3 class="text-2xl font-semibold mt-6">State Management Libraries (State කළමනාකරණ පුස්තකාල)</h3>
+                    <p>For complex applications, global state management can become challenging with just Context API. Libraries like `Redux`, `Zustand`, `MobX`, or `Recoil` provide more robust and scalable solutions for managing application state.</p>
+                    <p class="pl-4 border-l-4 border-blue-300">සංකීර්ණ applications සඳහා, Context API පමණක් භාවිතයෙන් global state management අභියෝගාත්මක විය හැක. `Redux`, `Zustand`, `MobX`, හෝ `Recoil` වැනි libraries application state කළමනාකරණය සඳහා වඩාත් ශක්තිමත් සහ පරිමාණය කළ හැකි විසඳුම් සපයයි.</p>
+                </div>
+            </div>
+            
+        </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Interactive Demos Logic ---
+
+        // State: Counter Demo
+        const counterDisplay = document.getElementById('counter-display');
+        const incrementBtn = document.getElementById('increment-btn');
+        const decrementBtn = document.getElementById('decrement-btn');
+        let count = 0;
+        if(incrementBtn && decrementBtn && counterDisplay) {
+            incrementBtn.addEventListener('click', () => {
+                count++;
+                counterDisplay.textContent = count;
+            });
+            decrementBtn.addEventListener('click', () => {
+                count--;
+                counterDisplay.textContent = count;
+            });
+        }
+
+        // Event Handling Demo
+        const eventMessage = document.getElementById('event-message');
+        const eventClickBtn = document.getElementById('event-click-btn');
+        const eventInput = document.getElementById('event-input');
+        if(eventClickBtn && eventInput && eventMessage) {
+            eventClickBtn.addEventListener('click', () => {
+                eventMessage.textContent = 'Button was clicked!';
+            });
+            eventInput.addEventListener('input', (e) => {
+                eventMessage.textContent = `Input value changed: ${e.target.value}`;
+            });
+        }
+
+        // Conditional Rendering Demo
+        const conditionalMessage = document.getElementById('conditional-message');
+        const conditionalBtn = document.getElementById('conditional-toggle-btn');
+        let isLoggedIn = false;
+        if(conditionalBtn && conditionalMessage) {
+            conditionalBtn.addEventListener('click', () => {
+                isLoggedIn = !isLoggedIn;
+                if (isLoggedIn) {
+                    conditionalMessage.textContent = 'Welcome back!';
+                    conditionalBtn.textContent = 'Logout';
+                    conditionalBtn.classList.remove('bg-indigo-500');
+                    conditionalBtn.classList.add('bg-red-500');
+                } else {
+                    conditionalMessage.textContent = 'Please log in.';
+                    conditionalBtn.textContent = 'Login';
+                    conditionalBtn.classList.remove('bg-red-500');
+                    conditionalBtn.classList.add('bg-indigo-500');
+                }
+            });
+        }
+
+        // useEffect: Data Fetcher Demo
+        const dataFetcherDemo = document.getElementById('data-fetcher-demo');
+        if (dataFetcherDemo) {
+            fetch('https://jsonplaceholder.typicode.com/todos/1')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    dataFetcherDemo.innerHTML = `
+                        <h4 class="font-semibold text-xl text-gray-800">Fetched Data</h4>
+                        <p class="text-gray-700"><strong>Title:</strong> ${json.title}</p>
+                        <p class="text-gray-700"><strong>Completed:</strong> ${json.completed ? 'Yes' : 'No'}</p>
+                    `;
+                })
+                .catch(error => {
+                    dataFetcherDemo.innerHTML = `<p class="text-red-500">Failed to fetch data: ${error.message}</p>`;
+                });
+        }
+
+        // useEffect: Name & Age Display Demo
+        const nameDisplayText = document.getElementById('name-display-text');
+        const ageDisplayText = document.getElementById('age-display-text');
+        const changeNameBtn = document.getElementById('change-name-btn');
+        const increaseAgeBtn = document.getElementById('increase-age-btn');
+        let currentName = 'John';
+        let currentAge = 30;
+
+        const updateNameAndAgeDisplay = () => {
+            if (nameDisplayText) nameDisplayText.textContent = currentName;
+            if (ageDisplayText) ageDisplayText.textContent = currentAge;
+            console.log(`Name changed to: ${currentName}`); // Simulate useEffect
+            console.log(`Age changed to: ${currentAge}`); // Simulate useEffect
+        };
+
+        if (changeNameBtn && increaseAgeBtn && nameDisplayText && ageDisplayText) {
+            updateNameAndAgeDisplay(); // Initial display
+            changeNameBtn.addEventListener('click', () => {
+                currentName = (currentName === 'John') ? 'Jane' : 'John';
+                updateNameAndAgeDisplay();
+            });
+            increaseAgeBtn.addEventListener('click', () => {
+                currentAge++;
+                updateNameAndAgeDisplay();
+            });
+        }
+
+        // useEffect: Timer Demo
+        const timerDemo = document.getElementById('timer-demo');
+        let secondsOnPage = 0;
+        let timerInterval = null; // Initialize as null to track if active
+
+        const startTimer = () => {
+            if (!timerInterval) { // Only start if not already running
+                timerInterval = setInterval(() => {
+                    secondsOnPage++;
+                    if (timerDemo) {
+                        timerDemo.textContent = secondsOnPage;
+                    }
+                }, 1000);
+            }
+        };
+
+        // Start timer when the DOM is loaded, as this is a single page app.
+        // In a multi-page app, this might be triggered by section visibility.
+        startTimer();
+
+        // useRef: Focus Input Demo
+        const focusInputDemo = document.getElementById('focus-input-demo');
+        const focusBtn = document.getElementById('focus-btn');
+
+        if (focusInputDemo && focusBtn) {
+            focusBtn.addEventListener('click', () => {
+                focusInputDemo.focus();
+            });
+        }
+
+
+        // Forms Demo
+        const feedbackForm = document.getElementById('feedback-form');
+        const formOutputDisplay = document.getElementById('form-output-display');
+        const formNameInput = document.getElementById('form-name');
+        const formFeedbackInput = document.getElementById('form-feedback');
+
+        if(feedbackForm && formOutputDisplay && formNameInput && formFeedbackInput) {
+            feedbackForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = formNameInput.value;
+                const feedback = formFeedbackInput.value;
+                formOutputDisplay.innerHTML = `
+                    <h3 class="text-2xl font-semibold text-blue-800">Form Output</h3>
+                    <div class="mt-4 space-y-2 text-gray-700">
+                        <p><strong>Name:</strong> ${name || 'N/A'}</p>
+                        <p><strong>Feedback:</strong> ${feedback || 'N/A'}</p>
+                    </div>
+                `;
+                formNameInput.value = '';
+                formFeedbackInput.value = '';
+            });
+        }
+        
+        // Context API: Theme Switcher
+        const themeContainer = document.getElementById('theme-demo-container');
+        const themeText = document.getElementById('theme-demo-text');
+        const themeBtn = document.getElementById('theme-toggle-btn');
+        let isDark = false;
+        if(themeContainer && themeText && themeBtn) {
+            themeBtn.addEventListener('click', () => {
+                isDark = !isDark;
+                if(isDark) {
+                    themeContainer.classList.add('bg-gray-800', 'text-white');
+                    themeContainer.classList.remove('bg-white', 'text-gray-800');
+                    themeText.textContent = 'Current Theme: Dark';
+                    themeBtn.classList.remove('bg-gray-800');
+                    themeBtn.classList.add('bg-blue-500');
+                } else {
+                    themeContainer.classList.remove('bg-gray-800', 'text-white');
+                    themeContainer.classList.add('bg-white', 'text-gray-800');
+                    themeText.textContent = 'Current Theme: Light';
+                    themeBtn.classList.remove('bg-blue-500');
+                    themeBtn.classList.add('bg-gray-800');
+                }
+            });
+        }
+
+        // Quiz Logic
+        const quizzes = {
+            'quiz1': {
+                'q1': 'c',
+                'q2': 'c'
+            },
+            'quiz2': {
+                'q3': 'b',
+                'q4': 'c'
+            },
+            'quiz3': {
+                'q5': 'b',
+                'q6': 'b'
+            },
+            'quiz4': {
+                'q7': 'c',
+                'q8': 'b'
+            },
+            'quiz5': {
+                'q9': 'b',
+                'q10': 'b'
+            },
+            'quiz6': {
+                'q11': 'c'
+            },
+            'quiz7': {
+                'q12': 'c',
+                'q13': 'c'
+            },
+            'quiz8': {
+                'q14': 'b',
+                'q15': 'c',
+                'q_useRef': 'b' // Correct answer for useRef quiz
+            },
+            'quiz9': {
+                'q16': 'b'
+            },
+            'quiz10': {
+                'q17': 'a',
+                'q18': 'c'
+            }
+        };
+
+        const quizElements = document.querySelectorAll('[id^="quiz"]');
+        quizElements.forEach(quizContainer => {
+            const quizId = quizContainer.id;
+            quizContainer.addEventListener('change', (e) => {
+                if (e.target.type === 'radio') {
+                    const questionName = e.target.name;
+                    const selectedValue = e.target.value;
+                    const correctAnswer = quizzes[quizId][questionName];
+                    
+                    const options = quizContainer.querySelectorAll(`input[name="${questionName}"]`);
+                    options.forEach(option => {
+                        const label = option.closest('label');
+                        label.classList.remove('correct', 'incorrect'); // Clear previous feedback
+                        if (option.value === correctAnswer) {
+                            label.classList.add('correct');
+                        } else if (option.checked) {
+                            label.classList.add('incorrect');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
